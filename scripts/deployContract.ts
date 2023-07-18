@@ -9,28 +9,28 @@ const delay = async (time: number) => {
 }
 
 async function main() {
-  const uniswapRouter = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
-  const uniswapFactory = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f";
+  const rewardToken = "0xD266B5f9c59D056D01ed2CEB8B6ac11419c23860";
+  const stakingToken = "0x5Df696829C8E97a4CbAd7864f4bCAa0FDb89ECA9";
 
 
 
-  const AddLiquidity = await ethers.getContractFactory("AddLiquidity");
-  const addLiquidity = await AddLiquidity.deploy(uniswapRouter, uniswapFactory);
+  const Farming = await ethers.getContractFactory("Farming");
+  const farming = await Farming.deploy(stakingToken, rewardToken);
 
-  await addLiquidity.deployed();
+  await farming.deployed();
 
   console.log(
-    `AddLiquidity contract deployed to ${addLiquidity.address}`
+    `Farming contract deployed to ${farming.address}`
   );
 
   console.log('wait of delay...')
-	await delay(15000) // delay 15 secons
+	await delay(30000) // delay 30 secons
 	console.log('starting verify contract...')
 	try {
 		await run('verify:verify', {
-			address: addLiquidity!.address,
-			contract: 'contracts/AddLiquidity.sol:AddLiquidity',
-			constructorArguments: [ uniswapRouter, uniswapFactory ],
+			address: farming!.address,
+			contract: 'contracts/farming.sol:Farming',
+			constructorArguments: [ stakingToken, rewardToken ],
 		});
 		console.log('verify success')
 	} catch (e: any) {

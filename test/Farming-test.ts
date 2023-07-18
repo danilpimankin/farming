@@ -47,22 +47,22 @@ describe("Farming contract", function () {
   describe("Functionality test", async () => {
     it.only("test 1. Initialize", async () => {
 
-        expect(await farming.tokensLeft())
-          .to.be.eq(ethers.utils.parseEther("1000"))
+      expect(await farming.tokensLeft())
+        .to.be.eq(ethers.utils.parseEther("1000"))
 
-        expect(await farming.percentage())
-          .to.be.eq(1000)
+      expect(await farming.percentage())
+        .to.be.eq(1000)
 
-        expect(await farming.epochDuration())
-          .to.be.eq(2678400)
+      expect(await farming.epochDuration())
+        .to.be.eq(2678400)
 
-        expect(await farming.amountOfEpochs())
-          .to.be.eq(3)
+      expect(await farming.amountOfEpochs())
+        .to.be.eq(3)
 
     })
 
     it.only("test 2. Deposit", async () => {
-
+      
     })
 
 
