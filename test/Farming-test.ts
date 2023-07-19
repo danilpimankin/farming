@@ -3,6 +3,7 @@ import { time } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
+import { log } from "console";
 
 
 describe("Farming contract", function () {
@@ -41,11 +42,14 @@ describe("Farming contract", function () {
     const amountOfEpochs = 3
     const startTime = await time.latest()
     await farming.initialize(totalAmount, percentage, epochDuration, amountOfEpochs, startTime)
+
+    await stakingToken.approve(farming.address, ethers.utils.parseEther("1000"))
+
  
   })
 
   describe("Functionality test", async () => {
-    it.only("test 1. Initialize", async () => {
+    it("test 1. Initialize", async () => {
 
       expect(await farming.tokensLeft())
         .to.be.eq(ethers.utils.parseEther("1000"))
@@ -61,21 +65,88 @@ describe("Farming contract", function () {
 
     })
 
-    it.only("test 2. Deposit", async () => {
-      
+    it("test 2. Deposit", async () => {
+
+
+        await farming.deposit(ethers.utils.parseEther("100"))
+        let test = {}
+        test = await farming.users(owner.address)
+ 
+        expect(test["amount"])
+        .to.be.eq(ethers.utils.parseEther("100"))
+        expect(test["claimed"])
+        .to.be.eq(false)
     })
 
+    it("test 3. Deposit event", async () => {
 
-  //   it("test 2. Call AddLiquidity without approve", async () => {
-  //       // await rewardToken.mint(user1.address, ethers.utils.parseEther("1000"))
-  //       // await stakingToken.mint(owner.address, ethers.utils.parseEther("1000"))
-  //       // await rewardToken.approve(farming.address, ethers.utils.parseEther("1000"))
-  //       // await stakingToken.connect(user1).approve(farming.address, ethers.utils.parseEther("1000"))
 
+      await expect(farming.deposit(ethers.utils.parseEther("100")))
+      .to.emit(farming, "Deposited")
+      .withArgs(owner.address, ethers.utils.parseEther("100"))
+  })
+    it("test 4. double deposit", async () => {
+
+
+    await farming.deposit(ethers.utils.parseEther("100"))
+    await expect(farming.deposit(ethers.utils.parseEther("100")))
+
+    .to.be.revertedWith("You already have a deposit")
+    })
+
+    it("test 5. Withdraw", async () => {
+
+      await farming.deposit(ethers.utils.parseEther("100"))
+
+      let test1 = {}
+      test1 = await farming.users(owner.address)
+
+      await farming.withdraw()
+
+      let test2 = {}
+      test2 = await farming.users(owner.address)
+
+      expect(test2["amount"])
+      .to.be.eq(0)
+    })
+
+    it("test 6. double withdraw", async () => {
+
+  
+      await farming.deposit(ethers.utils.parseEther("100"))
+
+      await farming.withdraw()
+
+      await expect(farming.withdraw())
+      .to.be.revertedWith("You don't have a deposit")
+      })
+
+    it("test 7. Withdraw event", async () => {
+
+      await farming.deposit(ethers.utils.parseEther("100"))
+
+      await expect(farming.withdraw())
+      .to.emit(farming, "Withdraw")
+      .withArgs(owner.address)
+    })
+
+    it("test 8. claimReward event", async () => {
+
+      const epochDuration =  2678400
+      const amountOfEpochs = 3
+
+      await farming.deposit(ethers.utils.parseEther("100"))
+
+      let test1 = {}
+      test1 = await farming.users(owner.address)
+
+      await time.increase(amountOfEpochs * epochDuration)
+
+      expect(await farming.claimRewards())
+      .to.emit(farming, "Claimed")
+      .withArgs(owner.address, ethers.utils.parseEther("30"))
  
-  //       await  expect(addLiquidity.addLiquidity(token1Contract.address, token2Contract.address, ethers.utils.parseEther("100"), ethers.utils.parseEther("100"),))
-  //       .to.be.revertedWith("MyToken: Insufficient allowance")
-        
-  // })
-})
+    })
+
+  })
 })

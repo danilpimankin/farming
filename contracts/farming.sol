@@ -102,6 +102,10 @@ contract Farming {
         emit Withdraw(msg.sender);
     }
 
+    // 100 200
+
+    
+
     function claimRewards() external {
         require(!users[msg.sender].claimed, "You don't have a deposit");
         require(users[msg.sender].depositTime + epochDuration < block.timestamp, "The Epoch is not over yet");

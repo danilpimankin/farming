@@ -20,7 +20,15 @@ npx hardhat run scripts/deployContract.ts --network goerli
 ```
 
 ## Task Running
-Running a task: 
+1. Running a deposit task: 
 ```
-npx hardhat addLiquidity --token1 <token1 address> --token2 <token1 address> --amount1 5 --amount2 5 --contract 0x11680743FBdc0e636D209c3196d1702204e1c06f --network goerli
+npx hardhat deposit --amount <token amount> --contract 0xe46F4C4fa2A962Ea1DDd5c89C80Dd44e001A94d6
+```
+2. Running a withdraw task:
+```
+npx hardhat withdraw --contract 0xe46F4C4fa2A962Ea1DDd5c89C80Dd44e001A94d6
+```
+3. Running a claim reward task:
+```
+npx hardhat claim --contract 0xe46F4C4fa2A962Ea1DDd5c89C80Dd44e001A94d6
 ```
